@@ -1,0 +1,19 @@
+<header class="navbar">
+    <a class="brand" href="/">🎬 MovieWeb</a>
+    <form class="search-form" action="/buscar" method="get">
+        <input type="text" name="q" placeholder="Buscar peliculas, actores o directores..." required>
+        <button type="submit">Buscar</button>
+    </form>
+    <nav class="nav-links">
+        <a href="/keyword">Por palabra clave</a>
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+            <a href="/perfil">Mi perfil</a>
+            <form action="/logout" method="post" class="inline-form">
+                <button type="submit" class="link-button">Salir (<%= currentUser.name %>)</button>
+            </form>
+        <% } else { %>
+            <a href="/login">Ingresar</a>
+            <a href="/register">Crear cuenta</a>
+        <% } %>
+    </nav>
+</header>

@@ -1,0 +1,41 @@
+<%- include('partials/header') %>
+
+<h1>Resultados para "<%= q %>"</h1>
+
+<h2 class="section-title">Peliculas</h2>
+<% if (results.movies.length) { %>
+    <div class="grid">
+        <% results.movies.forEach(function(m, i) { %>
+            <div class="movie-tile" style="--i: <%= i %>">
+                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
+                <div class="year"><%= m.release_year || '' %> <%= m.genre ? '· ' + m.genre : '' %></div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">Sin resultados de peliculas.</p>
+<% } %>
+
+<h2 class="section-title">Actores</h2>
+<% if (results.actors.length) { %>
+    <div class="people-list">
+        <% results.actors.forEach(function(a) { %>
+            <a href="/actor/<%= a.actor_id %>"><%= a.name %></a>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">Sin resultados de actores.</p>
+<% } %>
+
+<h2 class="section-title">Directores</h2>
+<% if (results.directors.length) { %>
+    <div class="people-list">
+        <% results.directors.forEach(function(d) { %>
+            <a href="/director/<%= d.director_id %>"><%= d.name %></a>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">Sin resultados de directores.</p>
+<% } %>
+
+<%- include('partials/footer') %>

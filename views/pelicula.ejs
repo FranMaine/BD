@@ -1,0 +1,138 @@
+<%- include('partials/header') %>
+
+<div class="detail-hero">
+    <% if (tmdbData && tmdbData.posterUrl) { %>
+        <img src="<%= tmdbData.posterUrl %>" alt="Poster de <%= movie.title %>">
+    <% } %>
+    <div class="info">
+        <h1><%= movie.title %></h1>
+        <% if (tmdbData && tmdbData.tagline) { %><p><em><%= tmdbData.tagline %></em></p><% } %>
+
+        <p>
+            <% if (movie.release_year) { %><span class="badge"><%= movie.release_year %></span><% } %>
+            <% if (movie.genre) { %><span class="badge"><%= movie.genre %></span><% } %>
+            <% if (movie.country) { %><span class="badge"><%= movie.country %></span><% } %>
+            <% if (movie.runtime) { %><span class="badge"><%= movie.runtime %> min</span><% } %>
+            <% if (avgRating && avgRating.total > 0) { %>
+                <span class="badge">⭐ <%= avgRating.avg_rating %> (<%= avgRating.total %> calificaciones)</span>
+            <% } %>
+        </p>
+
+        <p><%= (tmdbData && tmdbData.overview) || movie.overview || 'Sin sinopsis disponible.' %></p>
+
+        <% if (directors.length) { %>
+            <p><strong>Direccion:</strong>
+                <% directors.forEach(function(d, i) { %>
+                    <a href="/director/<%= d.director_id %>"><%= d.name %></a><%= i < directors.length - 1 ? ', ' : '' %>
+                <% }); %>
+            </p>
+        <% } %>
+
+        <% if (tmdbData && tmdbData.trailerUrl) { %>
+            <p><a href="<%= tmdbData.trailerUrl %>" target="_blank" rel="noopener">▶ Ver trailer en YouTube</a></p>
+        <% } %>
+
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+            <div class="card">
+                <form class="inline-form" action="/favorito/<%= movie.movie_id %>" method="post">
+                    <button type="submit" class="secondary">
+                        <%= (userMovie && userMovie.is_favorite) ? '★ Quitar de favoritos' : '☆ Agregar a favoritos' %>
+                    </button>
+                </form>
+                <% if (!(userMovie && userMovie.is_watched)) { %>
+                    <form class="inline-form" action="/vista/<%= movie.movie_id %>" method="post">
+                        <button type="submit" class="secondary">Marcar como vista</button>
+                    </form>
+                <% } %>
+            </div>
+
+            <div class="card">
+                <h3>Tu calificacion</h3>
+                <form action="/calificar/<%= movie.movie_id %>" method="post">
+                    <div class="form-group">
+                        <label for="rating">Puntuacion (1 a 5)</label>
+                        <select name="rating" id="rating">
+                            <% for (let i = 1; i <= 5; i++) { %>
+                                <option value="<%= i %>" <%= (userMovie && userMovie.rating === i) ? 'selected' : '' %>><%= i %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="review">Opinion breve</label>
+                        <textarea name="review" id="review" rows="2"><%= (userMovie && userMovie.review) || '' %></textarea>
+                    </div>
+                    <button type="submit">Guardar calificacion</button>
+                </form>
+            </div>
+        <% } else { %>
+            <p><a href="/login">Inicia sesion</a> para calificar, marcar favoritos o escribir reseñas.</p>
+        <% } %>
+    </div>
+</div>
+
+<% if (cast.length) { %>
+    <h2 class="section-title">Reparto</h2>
+    <div class="people-list">
+        <% cast.forEach(function(a) { %>
+            <a href="/actor/<%= a.actor_id %>"><%= a.name %><%= a.character_name ? ' — ' + a.character_name : '' %></a>
+        <% }); %>
+    </div>
+<% } %>
+
+<% if (keywords.length) { %>
+    <h2 class="section-title">Palabras clave</h2>
+    <div class="people-list">
+        <% keywords.forEach(function(k) { %>
+            <a href="/keyword/resultados?kw=<%= encodeURIComponent(k.keyword) %>"><%= k.keyword %></a>
+        <% }); %>
+    </div>
+<% } %>
+
+<h2 class="section-title">Reseñas de la comunidad</h2>
+<% if (typeof currentUser !== 'undefined' && currentUser) { %>
+    <div class="card">
+        <form action="/pelicula/<%= movie.movie_id %>/resenas" method="post">
+            <div class="form-group">
+                <label for="rrating">Puntuacion (opcional)</label>
+                <select name="rating" id="rrating">
+                    <option value="">Sin puntuar</option>
+                    <% for (let i = 1; i <= 5; i++) { %><option value="<%= i %>"><%= i %></option><% } %>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="text">Reseña</label>
+                <textarea name="text" id="text" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tags">Etiquetas (separadas por coma)</label>
+                <input type="text" name="tags" id="tags" placeholder="spoilers, recomendada">
+            </div>
+            <button type="submit">Publicar reseña</button>
+        </form>
+    </div>
+<% } %>
+
+<% if (reviews.length) { %>
+    <% reviews.forEach(function(r) { %>
+        <div class="review">
+            <div class="meta">
+                <strong><%= r.username %></strong>
+                <%= r.rating ? '· ⭐ ' + r.rating : '' %>
+                · <%= new Date(r.createdAt).toLocaleString('es-AR') %>
+            </div>
+            <p><%= r.text %></p>
+            <% if (r.tags && r.tags.length) { %>
+                <% r.tags.forEach(function(t) { %><span class="badge"><%= t %></span><% }); %>
+            <% } %>
+            <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.userId === Number(r.userId)) { %>
+                <form action="/resenas/<%= r._id %>/borrar" method="post" class="inline-form">
+                    <button type="submit" class="danger">Borrar</button>
+                </form>
+            <% } %>
+        </div>
+    <% }); %>
+<% } else { %>
+    <p class="empty-state">Todavia no hay reseñas para esta pelicula.</p>
+<% } %>
+
+<%- include('partials/footer') %>

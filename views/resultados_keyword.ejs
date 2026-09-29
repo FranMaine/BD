@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<h1>Peliculas con la palabra clave "<%= kw %>"</h1>
+
+<% if (movies.length) { %>
+    <div class="grid">
+        <% movies.forEach(function(m, i) { %>
+            <div class="movie-tile" style="--i: <%= i %>">
+                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
+                <div class="year"><%= m.release_year || '' %> <%= m.genre ? '· ' + m.genre : '' %></div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">No se encontraron peliculas con esa palabra clave.</p>
+<% } %>
+
+<p><a href="/keyword">← Nueva busqueda por palabra clave</a></p>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+
+<h1>Bienvenido a MovieWeb</h1>
+<p>Busca peliculas, actores y directores, o explora por palabra clave.</p>
+
+<h2 class="section-title">Peliculas destacadas</h2>
+<div class="grid">
+    <% featured.forEach(function(m, i) { %>
+        <div class="movie-tile" style="--i: <%= i %>">
+            <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
+            <div class="year"><%= m.release_year || '' %> <%= m.genre ? '· ' + m.genre : '' %></div>
+        </div>
+    <% }); %>
+    <% if (featured.length === 0) { %>
+        <p class="empty-state">Todavia no hay peliculas cargadas. Ejecuta <code>npm run dev:setup</code>.</p>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

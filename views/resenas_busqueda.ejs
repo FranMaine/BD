@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<h1>Buscar reseñas</h1>
+<div class="card">
+    <form action="/resenas/buscar" method="get">
+        <div class="form-group">
+            <label for="text">Texto libre</label>
+            <input type="text" name="text" id="text" value="<%= query.text || '' %>">
+        </div>
+        <div class="form-group">
+            <label for="movieId">ID de pelicula</label>
+            <input type="text" name="movieId" id="movieId" value="<%= query.movieId || '' %>">
+        </div>
+        <button type="submit">Buscar</button>
+    </form>
+</div>
+
+<% if (reviews.length) { %>
+    <% reviews.forEach(function(r) { %>
+        <div class="review">
+            <div class="meta">
+                <strong><%= r.username %></strong> en <a href="/pelicula/<%= r.movieId %>"><%= r.movieTitle %></a>
+                <%= r.rating ? '· ⭐ ' + r.rating : '' %>
+                · <%= new Date(r.createdAt).toLocaleString('es-AR') %>
+            </div>
+            <p><%= r.text %></p>
+        </div>
+    <% }); %>
+<% } else { %>
+    <p class="empty-state">Sin resultados.</p>
+<% } %>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<div class="detail-hero">
+    <% if (tmdbData && tmdbData.profileUrl) { %>
+        <img src="<%= tmdbData.profileUrl %>" alt="Foto de <%= person.name %>">
+    <% } %>
+    <div class="info">
+        <h1><%= person.name %></h1>
+        <p>
+            <% if (tmdbData && tmdbData.birthday) { %><span class="badge">Nacimiento: <%= tmdbData.birthday %></span><% } %>
+            <% if (person.country) { %><span class="badge"><%= person.country %></span><% } %>
+        </p>
+        <p><%= (tmdbData && tmdbData.biography) || person.biography || 'Sin biografia disponible.' %></p>
+    </div>
+</div>
+
+<h2 class="section-title">Peliculas dirigidas</h2>
+<% if (movies.length) { %>
+    <div class="grid">
+        <% movies.forEach(function(m, i) { %>
+            <div class="movie-tile" style="--i: <%= i %>">
+                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
+                <div class="year"><%= m.release_year || '' %></div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">Sin peliculas registradas.</p>
+<% } %>
+
+<%- include('partials/footer') %>

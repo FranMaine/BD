@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+
+<h1>Hola, <%= currentUser.name %></h1>
+
+<h2 class="section-title">Timeline de actividad</h2>
+<% if (timeline.length) { %>
+    <% timeline.forEach(function(ev, i) { %>
+        <div class="timeline-item" style="--i: <%= i %>">
+            <time><%= new Date(ev.timestamp).toLocaleString('es-AR') %></time>
+            <% if (ev.type === 'RATED_MOVIE') { %>
+                Calificaste <a href="/pelicula/<%= ev.details.movieId %>"><%= ev.details.movieTitle %></a>
+                con <%= ev.details.rating %> ⭐
+            <% } else if (ev.type === 'ADDED_TO_FAVORITES') { %>
+                Agregaste <a href="/pelicula/<%= ev.details.movieId %>"><%= ev.details.movieTitle %></a> a favoritos
+            <% } else if (ev.type === 'WROTE_REVIEW') { %>
+                Escribiste una reseña de <a href="/pelicula/<%= ev.details.movieId %>"><%= ev.details.movieTitle %></a>
+            <% } else { %>
+                <%= ev.type %>
+            <% } %>
+        </div>
+    <% }); %>
+<% } else { %>
+    <p class="empty-state">Todavia no hay actividad registrada.</p>
+<% } %>
+
+<h2 class="section-title">Mis favoritas</h2>
+<% if (favorites.length) { %>
+    <div class="grid">
+        <% favorites.forEach(function(m, i) { %>
+            <div class="movie-tile" style="--i: <%= i %>">
+                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
+                <div class="year"><%= m.release_year || '' %><%= m.rating ? ' · ⭐ ' + m.rating : '' %></div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">Todavia no marcaste peliculas como favoritas.</p>
+<% } %>
+
+<h2 class="section-title">Vistas</h2>
+<% if (watched.length) { %>
+    <div class="grid">
+        <% watched.forEach(function(m, i) { %>
+            <div class="movie-tile" style="--i: <%= i %>">
+                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
+                <div class="year"><%= m.release_year || '' %><%= m.rating ? ' · ⭐ ' + m.rating : '' %></div>
+                <% if (m.review) { %><p><%= m.review %></p><% } %>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <p class="empty-state">Todavia no marcaste peliculas como vistas.</p>
+<% } %>
+
+<%- include('partials/footer') %>
