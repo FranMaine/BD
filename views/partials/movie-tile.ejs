@@ -1,0 +1,21 @@
+<div class="movie-tile" style="--i: <%= i %>">
+    <a href="/pelicula/<%= m.movie_id %>">
+        <div class="poster-wrap">
+            <% if (m.posterUrl) { %>
+                <img src="<%= m.posterUrl %>" alt="Poster de <%= m.title %>" loading="lazy">
+            <% } else { %>
+                <div class="poster-placeholder"><span><%= m.title.charAt(0) %></span></div>
+            <% } %>
+        </div>
+        <div class="tile-body">
+            <h3><%= m.title %></h3>
+            <div class="year">
+                <%= m.release_year || '' %>
+                <%= m.genre ? '· ' + m.genre : '' %>
+                <%= m.character_name ? '· ' + m.character_name : '' %>
+                <%= m.rating ? '· ⭐ ' + m.rating : '' %>
+            </div>
+            <% if (m.review) { %><p><%= m.review %></p><% } %>
+        </div>
+    </a>
+</div>

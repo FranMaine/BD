@@ -1,15 +1,13 @@
 <%- include('partials/header') %>
 
-<h1>Bienvenido a MovieWeb</h1>
-<p>Busca peliculas, actores y directores, o explora por palabra clave.</p>
+<p class="eyebrow">Bases de Datos · TP 2026</p>
+<h1 class="hero-title">Encontra tu proxima <em>obsesion</em> cinematografica.</h1>
+<p class="hero-subtitle">Busca peliculas, actores y directores, o explora el catalogo por palabra clave.</p>
 
 <h2 class="section-title">Peliculas destacadas</h2>
 <div class="grid">
     <% featured.forEach(function(m, i) { %>
-        <div class="movie-tile" style="--i: <%= i %>">
-            <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
-            <div class="year"><%= m.release_year || '' %> <%= m.genre ? '· ' + m.genre : '' %></div>
-        </div>
+        <%- include('partials/movie-tile', { m: m, i: i }) %>
     <% }); %>
     <% if (featured.length === 0) { %>
         <p class="empty-state">Todavia no hay peliculas cargadas. Ejecuta <code>npm run dev:setup</code>.</p>

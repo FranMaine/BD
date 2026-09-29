@@ -3,9 +3,12 @@
 <div class="detail-hero">
     <% if (tmdbData && tmdbData.profileUrl) { %>
         <img src="<%= tmdbData.profileUrl %>" alt="Foto de <%= person.name %>">
+    <% } else { %>
+        <div class="poster-placeholder detail-hero-placeholder"><span><%= person.name.charAt(0) %></span></div>
     <% } %>
     <div class="info">
-        <h1><%= person.name %></h1>
+        <p class="eyebrow">Director</p>
+        <h1 class="hero-title"><%= person.name %></h1>
         <p>
             <% if (tmdbData && tmdbData.birthday) { %><span class="badge">Nacimiento: <%= tmdbData.birthday %></span><% } %>
             <% if (person.country) { %><span class="badge"><%= person.country %></span><% } %>
@@ -18,10 +21,7 @@
 <% if (movies.length) { %>
     <div class="grid">
         <% movies.forEach(function(m, i) { %>
-            <div class="movie-tile" style="--i: <%= i %>">
-                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
-                <div class="year"><%= m.release_year || '' %></div>
-            </div>
+            <%- include('partials/movie-tile', { m: m, i: i }) %>
         <% }); %>
     </div>
 <% } else { %>

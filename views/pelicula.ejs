@@ -3,9 +3,11 @@
 <div class="detail-hero">
     <% if (tmdbData && tmdbData.posterUrl) { %>
         <img src="<%= tmdbData.posterUrl %>" alt="Poster de <%= movie.title %>">
+    <% } else { %>
+        <div class="poster-placeholder detail-hero-placeholder"><span><%= movie.title.charAt(0) %></span></div>
     <% } %>
     <div class="info">
-        <h1><%= movie.title %></h1>
+        <h1 class="movie-title"><%= movie.title %></h1>
         <% if (tmdbData && tmdbData.tagline) { %><p><em><%= tmdbData.tagline %></em></p><% } %>
 
         <p>
@@ -74,7 +76,7 @@
     <h2 class="section-title">Reparto</h2>
     <div class="people-list">
         <% cast.forEach(function(a) { %>
-            <a href="/actor/<%= a.actor_id %>"><%= a.name %><%= a.character_name ? ' — ' + a.character_name : '' %></a>
+            <%- include('partials/person-pill', { href: '/actor/' + a.actor_id, name: a.name, thumbUrl: a.thumbUrl, extra: a.character_name }) %>
         <% }); %>
     </div>
 <% } %>

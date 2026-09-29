@@ -20,6 +20,8 @@ router.get('/pelicula/:id', async (req, res, next) => {
             movie.tmdb_id ? tmdbService.getMovieDetails(movie.tmdb_id) : null,
         ]);
 
+        await tmdbService.attachProfileThumbs(cast);
+
         let userMovie = null;
         if (req.session.user) {
             userMovie = await usersModel.getUserMovie(req.session.user.userId, movieId);

@@ -1,15 +1,13 @@
 <%- include('partials/header') %>
 
-<h1>Resultados para "<%= q %>"</h1>
+<p class="eyebrow">Resultados de busqueda</p>
+<h1 class="hero-title">"<%= q %>"</h1>
 
 <h2 class="section-title">Peliculas</h2>
 <% if (results.movies.length) { %>
     <div class="grid">
         <% results.movies.forEach(function(m, i) { %>
-            <div class="movie-tile" style="--i: <%= i %>">
-                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
-                <div class="year"><%= m.release_year || '' %> <%= m.genre ? '· ' + m.genre : '' %></div>
-            </div>
+            <%- include('partials/movie-tile', { m: m, i: i }) %>
         <% }); %>
     </div>
 <% } else { %>
@@ -20,7 +18,7 @@
 <% if (results.actors.length) { %>
     <div class="people-list">
         <% results.actors.forEach(function(a) { %>
-            <a href="/actor/<%= a.actor_id %>"><%= a.name %></a>
+            <%- include('partials/person-pill', { href: '/actor/' + a.actor_id, name: a.name, thumbUrl: a.thumbUrl, extra: null }) %>
         <% }); %>
     </div>
 <% } else { %>
@@ -31,7 +29,7 @@
 <% if (results.directors.length) { %>
     <div class="people-list">
         <% results.directors.forEach(function(d) { %>
-            <a href="/director/<%= d.director_id %>"><%= d.name %></a>
+            <%- include('partials/person-pill', { href: '/director/' + d.director_id, name: d.name, thumbUrl: d.thumbUrl, extra: null }) %>
         <% }); %>
     </div>
 <% } else { %>

@@ -1,14 +1,12 @@
 <%- include('partials/header') %>
 
-<h1>Peliculas con la palabra clave "<%= kw %>"</h1>
+<p class="eyebrow">Palabra clave</p>
+<h1 class="hero-title">"<%= kw %>"</h1>
 
 <% if (movies.length) { %>
     <div class="grid">
         <% movies.forEach(function(m, i) { %>
-            <div class="movie-tile" style="--i: <%= i %>">
-                <h3><a href="/pelicula/<%= m.movie_id %>"><%= m.title %></a></h3>
-                <div class="year"><%= m.release_year || '' %> <%= m.genre ? '· ' + m.genre : '' %></div>
-            </div>
+            <%- include('partials/movie-tile', { m: m, i: i }) %>
         <% }); %>
     </div>
 <% } else { %>

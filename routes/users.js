@@ -3,6 +3,7 @@ const router = express.Router();
 const usersModel = require('../models/usersModel');
 const moviesModel = require('../models/moviesModel');
 const activityModel = require('../models/activityModel');
+const tmdbService = require('../services/tmdbService');
 const { requireLogin, setFlash } = require('../middleware/auth');
 
 router.get('/perfil', requireLogin, async (req, res, next) => {
@@ -13,6 +14,7 @@ router.get('/perfil', requireLogin, async (req, res, next) => {
             usersModel.getWatched(userId),
             activityModel.getUserTimeline(userId, 30),
         ]);
+        await Promise.all([tmdbService.attachPosters(favorites), tmdbService.attachPosters(watched)]);
         res.render('perfil', { title: 'Mi perfil', favorites, watched, timeline });
     } catch (err) {
         next(err);

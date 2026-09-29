@@ -57,7 +57,7 @@ async function getUserMovie(userId, movieId) {
 
 async function getFavorites(userId) {
     const { rows } = await pool.query(
-        `SELECT m.movie_id, m.title, m.release_year, um.rating
+        `SELECT m.movie_id, m.tmdb_id, m.title, m.release_year, um.rating
          FROM user_movies um JOIN movies m ON m.movie_id = um.movie_id
          WHERE um.user_id = $1 AND um.is_favorite = true ORDER BY m.title`,
         [userId]
@@ -67,7 +67,7 @@ async function getFavorites(userId) {
 
 async function getWatched(userId) {
     const { rows } = await pool.query(
-        `SELECT m.movie_id, m.title, m.release_year, um.rating, um.review
+        `SELECT m.movie_id, m.tmdb_id, m.title, m.release_year, um.rating, um.review
          FROM user_movies um JOIN movies m ON m.movie_id = um.movie_id
          WHERE um.user_id = $1 AND um.is_watched = true ORDER BY um.updated_at DESC`,
         [userId]

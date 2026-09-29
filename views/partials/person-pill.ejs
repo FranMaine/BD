@@ -1,0 +1,8 @@
+<a href="<%= href %>">
+    <% if (thumbUrl) { %>
+        <img class="avatar" src="<%= thumbUrl %>" alt="">
+    <% } else { %>
+        <span class="avatar-placeholder"><%= name.charAt(0) %></span>
+    <% } %>
+    <span><%= name %><%= extra ? ' — ' + extra : '' %></span>
+</a>

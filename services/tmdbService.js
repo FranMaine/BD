@@ -71,4 +71,62 @@ async function searchMovie(title) {
     });
 }
 
-module.exports = { getMovieDetails, getPersonDetails, searchMovie, posterUrl, profileUrl };
+// Cache en memoria del proceso: los posters/fotos de las mismas peliculas y
+// personas se piden una y otra vez en cada listado (home, busqueda, perfiles),
+// asi que evitamos golpear la API de TMDB en cada request.
+const posterCache = new Map();
+const profileThumbCache = new Map();
+
+async function getMoviePosterThumb(tmdbId) {
+    if (!tmdbId) return null;
+    if (posterCache.has(tmdbId)) return posterCache.get(tmdbId);
+    const result = await safeCall(async () => {
+        const { data } = await tmdb.get(`/movie/${tmdbId}`, { params: { language: 'es-ES' } });
+        return posterUrl(data.poster_path, 'w342');
+    });
+    posterCache.set(tmdbId, result);
+    return result;
+}
+
+async function getPersonThumb(tmdbId) {
+    if (!tmdbId) return null;
+    if (profileThumbCache.has(tmdbId)) return profileThumbCache.get(tmdbId);
+    const result = await safeCall(async () => {
+        const { data } = await tmdb.get(`/person/${tmdbId}`);
+        return profileUrl(data.profile_path, 'w185');
+    });
+    profileThumbCache.set(tmdbId, result);
+    return result;
+}
+
+// Adjunta `posterUrl` a cada fila que tenga tmdb_id, en paralelo.
+async function attachPosters(rows) {
+    await Promise.all(
+        rows.map(async (row) => {
+            row.posterUrl = await getMoviePosterThumb(row.tmdb_id);
+        })
+    );
+    return rows;
+}
+
+// Adjunta `thumbUrl` a cada fila (actor/director) que tenga tmdb_id, en paralelo.
+async function attachProfileThumbs(rows) {
+    await Promise.all(
+        rows.map(async (row) => {
+            row.thumbUrl = await getPersonThumb(row.tmdb_id);
+        })
+    );
+    return rows;
+}
+
+module.exports = {
+    getMovieDetails,
+    getPersonDetails,
+    searchMovie,
+    posterUrl,
+    profileUrl,
+    getMoviePosterThumb,
+    getPersonThumb,
+    attachPosters,
+    attachProfileThumbs,
+};

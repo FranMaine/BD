@@ -14,6 +14,7 @@ router.get('/actor/:id', async (req, res, next) => {
             moviesModel.getMoviesForActor(actorId),
             actor.tmdb_id ? tmdbService.getPersonDetails(actor.tmdb_id) : null,
         ]);
+        await tmdbService.attachPosters(movies);
 
         res.render('actor', { title: actor.name, person: actor, movies, tmdbData });
     } catch (err) {
@@ -31,6 +32,7 @@ router.get('/director/:id', async (req, res, next) => {
             moviesModel.getMoviesForDirector(directorId),
             director.tmdb_id ? tmdbService.getPersonDetails(director.tmdb_id) : null,
         ]);
+        await tmdbService.attachPosters(movies);
 
         res.render('director', { title: director.name, person: director, movies, tmdbData });
     } catch (err) {

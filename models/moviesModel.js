@@ -4,16 +4,16 @@ async function searchAll(term) {
     const like = `%${term}%`;
     const [movies, actors, directors] = await Promise.all([
         pool.query(
-            `SELECT movie_id, title, release_year, genre FROM movies
+            `SELECT movie_id, tmdb_id, title, release_year, genre FROM movies
              WHERE title ILIKE $1 ORDER BY title LIMIT 25`,
             [like]
         ),
         pool.query(
-            `SELECT actor_id, name FROM actors WHERE name ILIKE $1 ORDER BY name LIMIT 25`,
+            `SELECT actor_id, tmdb_id, name FROM actors WHERE name ILIKE $1 ORDER BY name LIMIT 25`,
             [like]
         ),
         pool.query(
-            `SELECT director_id, name FROM directors WHERE name ILIKE $1 ORDER BY name LIMIT 25`,
+            `SELECT director_id, tmdb_id, name FROM directors WHERE name ILIKE $1 ORDER BY name LIMIT 25`,
             [like]
         ),
     ]);
@@ -37,7 +37,7 @@ async function getDirectorsForMovie(movieId) {
 
 async function getCastForMovie(movieId) {
     const { rows } = await pool.query(
-        `SELECT a.actor_id, a.name, mc.character_name FROM actors a
+        `SELECT a.actor_id, a.tmdb_id, a.name, mc.character_name FROM actors a
          JOIN movie_cast mc ON mc.actor_id = a.actor_id
          WHERE mc.movie_id = $1 ORDER BY mc.cast_order, a.name`,
         [movieId]
@@ -57,7 +57,7 @@ async function getKeywordsForMovie(movieId) {
 
 async function searchByKeyword(keyword) {
     const { rows } = await pool.query(
-        `SELECT DISTINCT m.movie_id, m.title, m.release_year, m.genre
+        `SELECT DISTINCT m.movie_id, m.tmdb_id, m.title, m.release_year, m.genre
          FROM movies m
          JOIN movie_keywords mk ON mk.movie_id = m.movie_id
          JOIN keywords k ON k.keyword_id = mk.keyword_id
@@ -70,7 +70,7 @@ async function searchByKeyword(keyword) {
 
 async function getMoviesForActor(actorId) {
     const { rows } = await pool.query(
-        `SELECT m.movie_id, m.title, m.release_year, mc.character_name
+        `SELECT m.movie_id, m.tmdb_id, m.title, m.release_year, mc.character_name
          FROM movies m
          JOIN movie_cast mc ON mc.movie_id = m.movie_id
          WHERE mc.actor_id = $1 ORDER BY m.release_year DESC NULLS LAST`,
@@ -81,7 +81,7 @@ async function getMoviesForActor(actorId) {
 
 async function getMoviesForDirector(directorId) {
     const { rows } = await pool.query(
-        `SELECT m.movie_id, m.title, m.release_year
+        `SELECT m.movie_id, m.tmdb_id, m.title, m.release_year
          FROM movies m
          JOIN movie_directors md ON md.movie_id = m.movie_id
          WHERE md.director_id = $1 ORDER BY m.release_year DESC NULLS LAST`,
@@ -101,7 +101,7 @@ async function getAverageRating(movieId) {
 
 async function listFeatured(limit = 12) {
     const { rows } = await pool.query(
-        `SELECT movie_id, title, release_year, genre FROM movies
+        `SELECT movie_id, tmdb_id, title, release_year, genre FROM movies
          ORDER BY release_year DESC NULLS LAST LIMIT $1`,
         [limit]
     );
