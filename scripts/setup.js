@@ -40,7 +40,12 @@ async function ensureDatabaseExists() {
 }
 
 async function runSchema(pool) {
-    const files = fs.readdirSync(SCHEMA_DIR).filter((f) => f.startsWith('0') && f.endsWith('.sql')).sort();
+    // Solo los scripts de creacion (001, 002, ...). El script de borrado (099_drop_all.sql)
+    // se ejecuta aparte via "npm run db:drop", nunca durante el setup.
+    const files = fs
+        .readdirSync(SCHEMA_DIR)
+        .filter((f) => /^\d{3}_(?!drop).*\.sql$/.test(f))
+        .sort();
     for (const file of files) {
         console.log(`[setup] ejecutando esquema ${file}...`);
         const sql = fs.readFileSync(path.join(SCHEMA_DIR, file), 'utf8');
